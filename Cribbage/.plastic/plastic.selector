@@ -1,0 +1,4 @@
+repository "Cribbage@TheEpicNoob@cloud"
+  path "/"
+    br "/main"
+    co "/main"
