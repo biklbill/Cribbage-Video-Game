@@ -1,0 +1,179 @@
+From itertools Import combinations
+Import random
+
+CalcScore = Class
+    Constructor(currentScore, cardList, startCard)
+        score <- currentScore
+        cardList <- cardList
+        startCard <- startCard
+        score15List <- []
+        scoreValueList <- []
+        scoreFlushList <- []
+        score15CombinationsList <- []
+        scoreValueCombinationsList <- []
+        sum15 <- 0
+        same2 <- 0
+        same3 <- 0
+        same4 <- 0
+        runs <- 0
+        flush <- 0
+        sameSuitJack <- 0
+        runList <- []
+
+        Call convertLists()
+    EndConstructor
+
+    Procedure convertLists()
+        Append startCard to cardList
+        separatedCardList <- copy of cardList
+
+        For each card in cardList
+            If the numeric value of the last 2 digits of card is greater than 10
+                appendValue <- 10
+            Else
+                appendValue <- numeric value of the last 2 digits of card
+            EndIf
+
+            Add appendValue to score15List
+            Add numeric value of the last 2 digits of card to scoreValueList
+        EndFor
+
+        Sort score15List in ascending order
+        Sort scoreValueList in ascending order
+
+        For i incrementing from 2 to length of cardList
+            Append combinations of length i from score15List to score15CombinationsList
+            Append combinations of length i from scoreValueList to scoreValueCombinationsList
+        EndFor
+
+        Call score15()
+    EndProcedure
+
+    Procedure score15()
+        For each list of combinations i in score15CombinationsList
+            For each combination j in i
+                If sum of elements in j is equal to 15
+                    increment score by 2
+                    increment sum15 by 1
+                EndIf
+            EndFor
+        EndFor
+
+        Call score4()
+    EndProcedure
+
+    Procedure score4()
+        For each combination i in sublists of scoreValueCombinationsList with length 4
+            If all elements in i are equal
+                create a copy of sublists of scoreValueCombinationsList with length 3 as tempList
+
+                For each list j in tempList
+                    If j is equal to the first 3 terms of i
+                        remove j from scoreValueCombinationsList
+                    EndIf
+                EndFor
+
+                create a copy of sublists of scoreValueCombinationsList with length 2 as tempList
+
+                For each list j in tempList
+                    If j is equal to the first 2 terms of i
+                        remove j from scoreValueCombinationsList
+                    EndIf
+                EndFor
+
+                increment score by 12
+                increment same4 by 1
+            EndIf
+        EndFor
+
+        Call score3()
+    EndProcedure
+
+    Procedure score3()
+        For each combination i in sublists of scoreValueCombinationsList with length 3
+            If all elements in i are equal
+                create a copy of sublists of scoreValueCombinationsList with length 2 as tempList
+
+                For each list j in tempList
+                    If j is equal to the first 2 terms of i
+                        remove j from scoreValueCombinationsList
+                    EndIf
+                EndFor
+
+                increment score by 6
+                increment same3 by 1
+            EndIf
+        EndFor
+
+        Call score2()
+    EndProcedure
+
+    Procedure score2()
+        For each combination i in sublists of scoreValueCombinationsList with length 2
+            If both elements in i are equal
+                increment score by 2
+                increment same2 by 1
+            EndIf
+        EndFor
+
+        Call scoreRun()
+    EndProcedure
+
+    Procedure scoreRun()
+        For each combination i in sublists of scoreValueCombinationsList with length decrementing from length of cardList to 3
+            For each combination j in i
+                If length of j is equal to the number of unique elements in j and j is a consecutive sequence
+                    append j to runList
+                EndIf
+            EndFor
+        EndFor
+
+        create a copy of runList as tempList
+
+        For each element i in tempList
+            For each element j in tempList
+                If i is a subset of j and i is not j
+                    remove i from runList
+                    break
+                EndIf
+            EndFor
+        EndFor
+
+        For each element i in runList
+            increment score by length of i
+            increment runs by i
+        EndFor
+
+        Call scoreFlush()
+    EndProcedure
+
+    Procedure scoreFlush()
+        If the suits of all 5 cards in separatedCardList are the same 
+            increment score by 5
+            increment flush by 1
+        Else If the suits of the first 4 cards in separatedCardList are the same
+            increment score by 4
+            increment flush by 1
+        EndIf
+
+        Call scoreJack()
+    EndProcedure
+
+    Procedure scoreJack()
+        For each element in separatedCardList excluding the last element
+            If the value of the element is 11 and the suit is the same as the last element
+                increment score by 1
+                increment sameSuitJack by 1
+            EndIf
+        EndFor
+    EndProcedure
+EndClass
+
+allCards <- ["C01", "C02", "C03", ..., "S13"]
+startCard <- randomy select a card from allCards
+randCardList <- empty list
+
+Repeat 4 times
+    randomly select a card from allCards and append it to randCardList
+
+Create an instance of CalcScore with arguments 0, randCardList, startCard
